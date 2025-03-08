@@ -24,9 +24,9 @@ contract RPS {
     }
 
     function addPlayer() public payable {
-        require(numPlayer < 2, "Game is full");
-        require(msg.value == 1 ether, "Entry fee is 1 ETH");
-        require(!isPlayer(msg.sender), "Already joined");
+        require(numPlayer < 2);
+        require(msg.value == 1 ether);
+        require(!isPlayer(msg.sender));
         
         reward += msg.value;
         players.push(msg.sender);
@@ -40,21 +40,21 @@ contract RPS {
     }
 
     function commitChoice(bytes32 commitHash) public {
-        require(isPlayer(msg.sender), "Not a player");
-        require(!hasCommitted[msg.sender], "Already committed");
+        require(isPlayer(msg.sender));
+        require(!hasCommitted[msg.sender]);
         
         commitments[msg.sender] = commitHash;
         hasCommitted[msg.sender] = true;
     }
 
     function revealChoice(uint choice, string memory secret) public {
-        require(isPlayer(msg.sender), "Not a player");
-        require(hasCommitted[msg.sender], "You must commit first");
-        require(!hasRevealed[msg.sender], "Already revealed");
+        require(isPlayer(msg.sender));
+        require(hasCommitted[msg.sender]);
+        require(!hasRevealed[msg.sender]);
 
         bytes32 calculatedHash = getChoiceHash(choice, secret);
-        require(commitments[msg.sender] == calculatedHash, "Commit does not match");
-        require(choice <= 4, "Invalid choice");
+        require(commitments[msg.sender] == calculatedHash);
+        require(choice <= 4);
 
         player_choice[msg.sender] = choice;
         hasRevealed[msg.sender] = true;
@@ -67,7 +67,7 @@ contract RPS {
 
 
     function SingleplayTimeOut() public {
-        require(numPlayer == 1, "Only one player allowed");
+        require(numPlayer == 1);
         if (block.timestamp - startTime[players[0]] > TIMEOUT) {
             payable(players[0]).transfer(reward);
             DeleteGame();
@@ -75,8 +75,8 @@ contract RPS {
     }
 
     function MultiPlayTimeOut() public {
-        require(numPlayer == 2, "Two players required");
-        require(numInput < 2, "Game already completed");
+        require(numPlayer == 2);
+        require(numInput < 2);
         if (block.timestamp - startTime[players[0]] > TIMEOUT) {
             for (uint i = 0; i < players.length; i++) {
                 if (!hasRevealed[players[i]]) {
